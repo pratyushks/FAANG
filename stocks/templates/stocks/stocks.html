@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ company }} - {{ graph_type }} Graph</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <h1>{{ company }} Stock Price - {{ graph_type }} Graph</h1>
+    <div class="image-container">
+        {% if image_url %}
+            <img src="{{ image_url }}" alt="{{ company }} {{ graph_type }} graph" style="max-width: 100%; height: auto;">
+        {% else %}
+            <p>Graph not available.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

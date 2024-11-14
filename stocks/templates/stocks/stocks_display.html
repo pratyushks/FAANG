@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Gainers and Losers</title>
+    <style>
+        /* Basic styles for the table layout */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #000;
+            color: #fff
+        }
+        .container {
+            width: 90%;
+            margin: auto;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #333;
+            color: #ffffff
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+        .table th {
+            background-color: #555;
+            font-weight: bold;
+            color: #ffffff;
+        }
+        .positive {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .negative {
+            color: #F44336;
+            font-weight: bold;
+        }
+        .symbol {
+            font-weight: bold;
+            color: #0363ff;
+        }
+        .divider {
+            border-top: 2px solid #444;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="section">
+        <div class="section-title">Top 5 Gainers</div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Change</th>
+                    <th>% Change</th>
+                    <th>Volume</th>
+                    <th>Market Cap</th>
+                    <th>PE Ratio (TTM)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for gainer in gainers %}
+                <tr>
+                    <td class="symbol">{{ gainer.symbol }}</td>
+                    <td>{{ gainer.shortName }}</td>
+                    <td>${{ gainer.regularMarketPrice }}</td>
+                    <td class="positive">{{ gainer.regularMarketChange }}</td>
+                    <td class="positive">{{ gainer.regularMarketChangePercent }}%</td>
+                    <td>{{ gainer.regularMarketVolume }}</td>
+                    <td>{{ gainer.marketCap|default:"N/A" }}</td>
+                    <td>{{ gainer.trailingPE|default:"N/A" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+        <div class="section-title">Top 5 Losers</div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Change</th>
+                    <th>% Change</th>
+                    <th>Volume</th>
+                    <th>Market Cap</th>
+                    <th>PE Ratio (TTM)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for loser in losers %}
+                <tr>
+                    <td class="symbol">{{ loser.symbol }}</td>
+                    <td>{{ loser.shortName }}</td>
+                    <td>${{ loser.regularMarketPrice }}</td>
+                    <td class="negative">{{ loser.regularMarketChange }}</td>
+                    <td class="negative">{{ loser.regularMarketChangePercent }}%</td>
+                    <td>{{ loser.regularMarketVolume }}</td>
+                    <td>{{ loser.marketCap|default:"N/A" }}</td>
+                    <td>{{ loser.trailingPE|default:"N/A" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

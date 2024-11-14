@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FAANG Stock Price Forecasting</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="{% static 'styles_sidebar.css' %}">
+    
+    <script>
+        function showGraph(company, type) {
+            const img = document.getElementById("graph-image");
+            img.classList.add("fade-out"); // Start fade-out before changing the image
+
+            // Fetch the image URL dynamically
+            fetch(`/stocks/get_image/${company}/${type}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.image_url) {
+                        img.src = data.image_url;
+                        img.alt = `${company} ${type} Graph`;
+                    } else {
+                        img.src = "";
+                        img.alt = "Graph not available";
+                        alert("Graph not available for this selection.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching image:", error);
+                })
+                .finally(() => {
+                    // Transition effects
+                    setTimeout(() => img.classList.remove("fade-out"), 200);
+                    img.classList.add("fade-in");
+                    setTimeout(() => img.classList.remove("fade-in"), 200);
+                });
+        }
+
+        // Toggle sidebar visibility
+        function toggleSidebar() {
+            document.getElementById("price-sidebar").classList.toggle("visible");
+        }
+
+        function redirectToMoversPage() {
+            // Redirect to the top movers and losers page
+            window.location.href = "/stocks/stocks/movers/";
+        }
+
+        function fetchStockPrices() {
+            fetch("/stocks/get_live_prices/")
+                .then(response => response.json())
+                .then(data => {
+                    const priceList = document.getElementById("price-list");
+                    priceList.innerHTML = ""; // Clear existing content
+                    
+                    for (const [company, info] of Object.entries(data)) {
+                        const listItem = document.createElement("div");
+                        listItem.innerHTML = `
+                        <div style="display:flex; justify-content:center; padding-top: 30px;">
+                            <span class="company-name">${company}:  </span>
+                             <span>${info.price ? `$${info.price}` : "N/A"}</span>
+                        </div>
+                            <img src="${info.image_url}" alt="${company} graph" class="stock-graph">
+                        `;
+                        priceList.appendChild(listItem);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching stock prices:", error);
+                });
+        }
+
+        window.onload = fetchStockPrices; // Fetch prices when page loads
+    </script>
+    <style>
+        body {
+            background-image: url("{% static 'images/background1.png' %}");
+            background-size: 112% 115%;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: Arial, sans-serif;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header and Company Logos -->
+    <div class="header">
+        <h1>FAANG Stock Price Prediction</h1>
+        <div class="logo-container">
+            <!-- Company Cards with Logos and Buttons -->
+            <div class="company-card">
+                <img src="{% static 'images/facebook_logo.png' %}" alt="Facebook" class="company-logo">
+                <div class="button-pair">
+                    <button onclick="showGraph('facebook', 'historical')" class="option-button facebook-button">Historical</button>
+                    <button onclick="showGraph('facebook', 'prediction')" class="option-button facebook-button">Prediction</button>
+                </div>
+            </div>
+
+            <div class="company-card">
+                <img src="{% static 'images/apple_logo.png' %}" alt="Apple" class="company-logo">
+                <div class="button-pair">
+                    <button onclick="showGraph('apple', 'historical')" class="option-button apple-button">Historical</button>
+                    <button onclick="showGraph('apple', 'prediction')" class="option-button apple-button">Prediction</button>
+                </div>
+            </div>
+
+            <div class="company-card">
+                <img src="{% static 'images/amazon_logo.png' %}" alt="Amazon" class="company-logo">
+                <div class="button-pair">
+                    <button onclick="showGraph('amazon', 'historical')" class="option-button amazon-button">Historical</button>
+                    <button onclick="showGraph('amazon', 'prediction')" class="option-button amazon-button">Prediction</button>
+                </div>
+            </div>
+
+            <div class="company-card">
+                <img src="{% static 'images/netflix_logo.png' %}" alt="Netflix" class="company-logo">
+                <div class="button-pair">
+                    <button onclick="showGraph('netflix', 'historical')" class="option-button netflix-button">Historical</button>
+                    <button onclick="showGraph('netflix', 'prediction')" class="option-button netflix-button">Prediction</button>
+                </div>
+            </div>
+
+            <div class="company-card">
+                <img src="{% static 'images/google_logo.png' %}" alt="Google" class="company-logo">
+                <div class="button-pair">
+                    <button onclick="showGraph('google', 'historical')" class="option-button google-button">Historical</button>
+                    <button onclick="showGraph('google', 'prediction')" class="option-button google-button">Prediction</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Centered Image Display Area -->
+    <div class="image-container">
+        <img id="graph-image" src="{% static 'images/choose.png' %}" alt="Select a graph to view">
+    </div>
+
+    <div class="toggle-icon" onclick="toggleSidebar()">☰</div>
+
+    <div class="left-toggle-icon" onclick="redirectToMoversPage()">📈</div>
+
+    <!-- Price Sidebar, initially hidden -->
+    <div id="price-sidebar" class="price-sidebar">
+        <h2 style="color:white;">Live FAANG Prices</h2>
+        <div id="price-list">
+            <div class="company-container">
+                <!-- Facebook -->
+                <div class="name-price">
+                    <span class="company-name" style="color:red;">Facebook: ${{ stock_data.Facebook.price }}</span>
+                </div>
+                <div class="graph-container">
+                    <img src="{% static stock_data.Facebook.graph_url %}" class="stock-graph" alt="Facebook stock graph">
+                </div>
+            </div>
+
+            <div class="company-container">
+                <!-- Apple -->
+                <div class="name-price" style="color: #000000;">
+                    <span class="company-name">Apple: ${{ stock_data.Apple.price }}</span>
+                </div>
+                <div class="graph-container">
+                    <img src="{% static stock_data.Apple.graph_url %}" class="stock-graph" alt="Apple stock graph">
+                </div>
+            </div>
+
+            <div class="company-container">
+                <!-- Amazon -->
+                <div class="name-price" style="color: #FF9900;">
+                    <span class="company-name">Amazon: ${{ stock_data.Amazon.price }}</span>
+                </div>
+                <div class="graph-container">
+                    <img src="{% static stock_data.Amazon.graph_url %}" class="stock-graph" alt="Amazon stock graph">
+                </div>
+            </div>
+
+            <div class="company-container">
+                <!-- Netflix -->
+                <div class="name-price" style="color: #E50914;">
+                    <span class="company-name">Netflix: ${{ stock_data.Netflix.price }}</span>
+                </div>
+                <div class="graph-container">
+                    <img src="{% static stock_data.Netflix.graph_url %}" class="stock-graph" alt="Netflix stock graph">
+                </div>
+            </div>
+
+            <div class="company-container">
+                <!-- Google -->
+                <div class="name-price" style="color: #0F9D58;">
+                    <span class="company-name">Google: ${{ stock_data.Google.price }}</span>
+                </div>
+                <div class="graph-container">
+                    <img src="{% static stock_data.Google.graph_url %}" class="stock-graph" alt="Google stock graph">
+                </div>
+            </div>
+        </div>
+    </div> 
+</body>
+</html>
